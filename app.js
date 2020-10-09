@@ -21,6 +21,9 @@ const ItemCtrl = (function () {
   };
 
   return {
+    getItems: function () {
+      return data.items;
+    },
     logData: function () {
       return data;
     },
@@ -29,16 +32,73 @@ const ItemCtrl = (function () {
 
 // UI Controller
 const UICtrl = (function () {
+  const UISelectors = {
+    itemList: "#item-list",
+    addBtn: ".add-btn",
+    itemNameInput: "#item-name",
+    itemCaloriesInput: "#item-calories",
+  };
+
   // Public Methods
-  return {};
+  return {
+    getSelectors: function () {
+      return UISelectors;
+    },
+    getItemInput: function () {
+      return {
+        name: document.querySelector(UISelectors.itemNameInput).value,
+        calories: document.querySelector(UISelectors.itemCaloriesInput).value,
+      };
+    },
+    populateItemList: function (items) {
+      let html = "";
+      items.forEach(function (item) {
+        html += /*html*/ `
+        <li class="collection-item" id="item-${item.id}">
+        <strong>${item.name}:</strong> <em>${item.calories} Calories</em>
+        <a href="" class="secondary-content">
+          <i class="edit-item fa fa-pencil"></i>
+        </a>
+      </li>`;
+      });
+
+      // Insert list items
+      document.querySelector(UISelectors.itemList).innerHTML = html;
+    },
+  };
 })();
 
 // App Controller
 const App = (function (ItemCtrl, UICtrl) {
+  // Load Event Listeners
+  const loadEventListeners = function () {
+    const UISelectors = UICtrl.getSelectors();
+
+    // Add item event
+    document
+      .querySelector(UISelectors.addBtn)
+      .addEventListener("click", itemAddSubmit);
+  };
+
+  // Item Add Sumit
+  const itemAddSubmit = function (e) {
+    // Get Item Input
+    const input = UICtrl.getItemInput();
+
+    e.preventDefault();
+  };
+
   // Public Methods
   return {
     init: function () {
-      console.log("Initializing App...");
+      // Fetch items from data structure
+      const items = ItemCtrl.getItems();
+
+      // Populate list with items
+      UICtrl.populateItemList(items);
+
+      // Load Event Listeners
+      loadEventListeners();
     },
   };
 })(ItemCtrl, UICtrl);
